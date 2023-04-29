@@ -54,7 +54,7 @@
         </div>
         
         <br>
-        <p><?php echo $error_msg ?></p>
+        <p id="err" name="err" style="color:red;"></p>
         <br>
         <input type="submit" value="Submit">
         
@@ -79,7 +79,7 @@
             $user_id = $_SESSION['UserID'];
             
             
-            
+                //en funktion som kollar vilken tagg blev vald för att sedan kunna ge det ett nummer
                 function setTag($tag){
                     switch ($tag) {
                     case 'Programing':
@@ -111,10 +111,12 @@
                     }             
                 
             }else{
-                $error_msg = "Please select a tag!";
+                echo "<script>document.getElementById('err').innerText = 'Please select a tag!'</script>";
+                //echo "Please select a tag!";
             }
          }else{
-            $error_msg = "Please fill out all fileds.";
+            echo "<script>document.getElementById('err').innerText = 'Please fill out all fileds.'</script>";
+            //echo "Please fill out all fileds.";
         }
             
        }
@@ -132,12 +134,13 @@
         
         $usr = $_SESSION['Username'];
 
-        //Används till att radera inlägg genom att hitta idt på inlägget och användarnamnet på användaren
+        //Denna kollar om "delete_post" knappen blev tryckt och tarbort inlägget
         if(isset($_POST['delete_post'])) {
 
             $delete = $conn->prepare('DELETE FROM Posts WHERE PostId=?');
             $delete->bind_param('i', $_POST['post_id']);
 
+            //kollar om datan lyckades med att skickas
             if($delete->execute()) {
                 echo '<div class="success-message">Post deleted successfully.</div>';
             } else {
@@ -145,20 +148,23 @@
             }
         }
 
-        //visar posts som finns
+        //Hämtar information från "Posts" från den inloggade användaren
         $getPost_stamt = $conn -> prepare("SELECT * FROM Posts WHERE UserID =? ORDER BY created_at DESC");
         $getPost_stamt->bind_param('s', $_SESSION['UserID']);
         $getPost_stamt->execute();
         $results = $getPost_stamt->get_result();
 
+        //skriver ut alla användarens inlägg och endast (dina) inlägg
         while ($row = $results->fetch_assoc()) {
 
+            //kollar om användaren valde att vara anonym
             $Author = $row['Anonymous'] ? "Anonymous" : $_SESSION['Username'];
             echo '<div class="post-container">';
             echo '<div class="post-header">' . $row['Title'] . '</div>';
             echo '<div class="post-meta">By ' . $Author . " (you)". ' on ' . $row['Created_at'] . '</div>';
             echo '<div class="post-content">' . $row['Content'] . '</div>';
 
+            //hämtar infromation för taggs
             $getPost_stamt = $conn -> prepare("SELECT * FROM Tags WHERE TagID =?");
             $getPost_stamt->bind_param('s', $row['TagID']);
             $getPost_stamt->execute();
@@ -173,6 +179,7 @@
             }
             echo '</div>';
 
+            //gör det möjligt att radera inlägg
             echo '<form method="POST" id="delG">';
             echo '<input type="hidden" name="post_id" value="' . $row['PostId'] . '">';
             echo '<button type="submit" name="delete_post">Delete Post</button>';

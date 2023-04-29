@@ -21,6 +21,7 @@
             $question = $_POST['question'];
             $answer = $_POST['answer'];
 
+            //kollar så att alla inputs är ifyllda 
             if(!empty($_POST['email']) && isset($_POST['question']) && !empty($_POST['answer'])){
                 $getmail = $conn->prepare('SELECT * FROM Users where Email=?');
                 $getmail->bind_param('s',$_POST['email']);
@@ -28,13 +29,15 @@
                 $res = $getmail ->get_result();
                 $USER = $res->fetch_assoc();
 
-
+                //hämtar data från "user_secret_questions" tabalen i databasen
                 $info_stamt = $conn->prepare("SELECT * FROM user_secret_questions WHERE UserID=?");	
                 $info_stamt->bind_param("s", $USER['UserID']);
                 $info_stamt->execute();
                 $results = $info_stamt->get_result();
     
                 while($table = $results->fetch_assoc()){
+
+                    //kollar så att infon stämmer med det i databasen
                     if(strtolower($table['Question']) === strtolower($question) && strtolower($table['Answer']) === strtolower($answer)){
                         $_SESSION['page'] = "founduser";
                     }else{
@@ -94,11 +97,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../assets/css/login.css">
+	<link rel="stylesheet" href="../assets/css/forgotPassword.css">
     <title>Login BelConnect</title>
 </head>
 <body>
-    <h2>Login</h2>
+    <h2>Forgot password</h2>
     <?php if($_SESSION['page'] == "finduser"):?>
             <form method="post" action="" name="getInfo">
             <label for="username">Email:</label>

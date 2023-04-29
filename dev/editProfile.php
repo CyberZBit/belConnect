@@ -12,7 +12,7 @@
             
 <?php
 	require "config.php";
-	require "./metoder.php";
+	require "metoder.php";
 	//kollar om det sker en POST request på sidan
 	if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$tabname = $_COOKIE["tabname"];
@@ -41,7 +41,7 @@
 					 * Kollar om $Phone_number är större eller likamed 6 siffor
 					 * Kollar om $Phone_number matchar med formatet som finns i metoden "checkPhoneNumber"
 					 */
-					if(!empty(trim($Phone_number)) && strlen(trim($Phone_number)) >= 6 && checkPhoneNumber(trim($Phone_number))){
+					if(strlen(trim($Phone_number)) >= 6 && checkPhoneNumber(trim($Phone_number))){
 						if(inputTest($firstname) && inputTest($lastname)){
 							//kollar om email addresen stämmer med formatet
 							if(filter_var($email, FILTER_VALIDATE_EMAIL)){
