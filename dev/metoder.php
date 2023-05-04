@@ -3,7 +3,6 @@
 
 
      //Kollar om strängen har siffror
-
     function siffror_test($str){
         return preg_match('/\d/', $str) > 0;
     };
@@ -14,27 +13,14 @@
         return preg_match('/\S/', $str) && preg_match('/[a-zA-Z]/', $str);
     };
 
+    //denna funaktion kollar så att användarnamnet inte har några speciella karaktärer
     function testUsername($str){
         return preg_match('/^[a-zA-Z0-9_]{1,}$/', $str);
     }
-      
 
-   //en function som tar fram "user-id" om det behövs. 
-    function getid($conn){
-        $user = $_POST['username'];
-        $pass = $_POST['password'];
-        $stmt = mysqli_prepare($conn, "SELECT id FROM users WHERE username = ? AND password = ?");
-        mysqli_stmt_bind_param($stmt, "ss", $user, $pass);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $row = mysqli_fetch_assoc($result);
-
-        return $row['id'];
-    };
-
-    //en funktion till att göra session id's
-    function generate_session_id() {
-        $prefix = "SESSION_"; // Add a prefix to make the session ID more unique
-        return $prefix . uniqid();
-    }
+    //funktionen används för att kolla om telefonnumret endast innehåller sifforor och ett "+" tecken  
+    function checkPhoneNumber($str) {
+        return preg_match('/^[0-9+]+$/', $str);
+      }
+    
 ?>
