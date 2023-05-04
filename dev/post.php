@@ -43,13 +43,27 @@
         <label>Tags:</label>
         <div class="checkbox-container">
 
-            <select name="tags" id="tags">  
-                <option value="Select" name="select_tag">select tag</option> 
-                <option value="Food" name="Food">food</option>
-                <option value="Art" name="Art">art</option>
-                <option value="Music" name="Music">music</option>
-                <option value="Other" name="Other">other</optison>
-            </select>
+        <?php 
+            //fix efter redovisning (1)
+            $getTags = $conn->prepare('SELECT * FROM Tags');
+            $getTags->execute();
+            $result = $getTags->get_result();
+            $tags = array();
+            
+            foreach ($result as $row) {
+                $tags[] = $row['Tagname'];
+            }
+            
+            echo "<select name='tags' id='tags'>";
+            echo '<option value="Select" name="select_tag">select tag</option>';
+            
+            foreach ($tags as $tag) {
+                echo "<option value='$tag' name='$tag'>$tag</option>";
+            }
+            
+            echo '</select>';
+            
+        ?>
 
         </div>
         
@@ -75,6 +89,8 @@
             $Title = strip_tags($_POST['post-name']);
             $Content = strip_tags($_POST['post-data']);
             $Anonymous = isset($_POST['anonymous']) ? 1 : 0;
+
+
             $tag = $_POST['tags'];
             $user_id = $_SESSION['UserID'];
             

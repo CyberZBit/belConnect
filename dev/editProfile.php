@@ -41,7 +41,7 @@
 					 * Kollar om $Phone_number är större eller likamed 6 siffor
 					 * Kollar om $Phone_number matchar med formatet som finns i metoden "checkPhoneNumber"
 					 */
-					if(strlen(trim($Phone_number)) >= 6 && checkPhoneNumber(trim($Phone_number))){
+					if(strlen(trim($Phone_number)) >= 6){
 						if(inputTest($firstname) && inputTest($lastname)){
 							//kollar om email addresen stämmer med formatet
 							if(filter_var($email, FILTER_VALIDATE_EMAIL)){

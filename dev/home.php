@@ -22,8 +22,17 @@
         </nav> 
 
             <?php
+                $getTags = $conn ->prepare('SELECT * FROM Tags');
+                $getTags->execute();
+                $result = $getTags->get_result();
+                $tags = array();
+                
+                foreach ($result as $row) {
+                    $tags[] = $row['Tagname'];
+                }
+                array_push($tags, "ALL POSTS");
                 $usr = $_SESSION['Username'];
-                $tags = array("Other", "Food", "Art", "Programming", "Music", "ALL POSTS");
+
                 // Check if the form was submitted
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
