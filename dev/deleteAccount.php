@@ -35,15 +35,11 @@
                         
                         while($table = $results->fetch_assoc()){
                           if(password_verify($_POST['password'], $table['Password']) && $_SESSION['UserID'] == $table['UserID'] && strtolower($_POST['username']) === strtolower($table['Username'])){
-                            
-                            
 
                             $delAcc = $conn->prepare('DELETE FROM user_secret_questions WHERE UserID=?;');
                             $delAcc->bind_param('i', $table['UserID']);
                             $delAcc->execute();
                             
-                            
-
                             $delAcc = $conn->prepare('DELETE FROM Posts WHERE UserID=?;');
                             $delAcc->bind_param('i', $table['UserID']);
                             $delAcc->execute();

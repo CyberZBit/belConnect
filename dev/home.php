@@ -22,17 +22,8 @@
         </nav> 
 
             <?php
-                $getTags = $conn ->prepare('SELECT * FROM Tags');
-                $getTags->execute();
-                $result = $getTags->get_result();
-                $tags = array();
-                
-                foreach ($result as $row) {
-                    $tags[] = $row['Tagname'];
-                }
-                array_push($tags, "ALL POSTS");
                 $usr = $_SESSION['Username'];
-
+                $tags = array("Other", "Food", "Art", "Programming", "Music", "ALL POSTS");
                 // Check if the form was submitted
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -88,25 +79,17 @@
                     }
                 }
                 echo "<br>";
-                $stmt = $conn->prepare("SELECT * FROM posts JOIN Tags ON posts.TagID = Tags.TagID $where_clause ORDER BY Created_at DESC");
-                $stmt->execute();
-                $result = $stmt->get_result();
                 
                 // Loopar igenom posts
-                $getPost_stamt = $conn -> prepare("SELECT * FROM posts JOIN Tags ON posts.TagID = Tags.TagID $where_clause ORDER BY Created_at DESC");
+                
+                $getPost_stamt = $conn->prepare(" SELECT posts.*, Users.Username, ( SELECT GROUP_CONCAT(Tagname SEPARATOR ', ') FROM Tags WHERE posts.TagID = Tags.TagID ) AS Tags FROM posts JOIN Users ON posts.UserID = Users.UserID $where_clause ORDER BY Created_at DESC ");
                 $getPost_stamt->execute();
                 $results = $getPost_stamt->get_result();
-        
+    
         //skriver ut alla inlägg
         while ($row = $results->fetch_assoc()) {
-            $getinforq = $conn->prepare('SELECT * FROM Users where UserID = ?');
-            $getinforq->bind_param("i", $row['UserID']);
-            $getinforq->execute();
-            $tt = $getinforq->get_result();
-            $user = $tt->fetch_assoc();
-
             //Kolla om "Anonymous mode" är på eller inte
-            $Author = $row['Anonymous'] ? "Anonymous" : $user['Username'];
+            $Author = $row['Anonymous'] ? "Anonymous" : $row['Username'];
             
             echo '<div class="post-container">';
             echo '<div class="post-header">' . $row['Title'] . '</div>';
@@ -124,16 +107,7 @@
                 }
             }
             
-
-            $getPost_stamt = $conn -> prepare("SELECT * FROM Tags WHERE TagID =?");
-            $getPost_stamt->bind_param('s', $row['TagID']);
-            $getPost_stamt->execute();
-            $res =$getPost_stamt->get_result();
-            $TagDATA = $res->fetch_assoc();
-            // Display the tags for the post
-            $tags = explode(',', $TagDATA['Tagname']);
-            
-
+            $tags = explode(',', $row['Tags']);
             echo '<div class="post-tags">';
             foreach($tags as $tag) {
                 echo '<span class="tag ' . $tag . '">' . ucfirst($tag) . '</span>';

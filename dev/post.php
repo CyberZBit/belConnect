@@ -43,27 +43,13 @@
         <label>Tags:</label>
         <div class="checkbox-container">
 
-        <?php 
-            //fix efter redovisning (1)
-            $getTags = $conn->prepare('SELECT * FROM Tags');
-            $getTags->execute();
-            $result = $getTags->get_result();
-            $tags = array();
-            
-            foreach ($result as $row) {
-                $tags[] = $row['Tagname'];
-            }
-            
-            echo "<select name='tags' id='tags'>";
-            echo '<option value="Select" name="select_tag">select tag</option>';
-            
-            foreach ($tags as $tag) {
-                echo "<option value='$tag' name='$tag'>$tag</option>";
-            }
-            
-            echo '</select>';
-            
-        ?>
+            <select name="tags" id="tags">  
+                <option value="Select" name="select_tag">select tag</option> 
+                <option value="Food" name="Food">food</option>
+                <option value="Art" name="Art">art</option>
+                <option value="Music" name="Music">music</option>
+                <option value="Other" name="Other">other</optison>
+            </select>
 
         </div>
         
@@ -89,8 +75,6 @@
             $Title = strip_tags($_POST['post-name']);
             $Content = strip_tags($_POST['post-data']);
             $Anonymous = isset($_POST['anonymous']) ? 1 : 0;
-
-
             $tag = $_POST['tags'];
             $user_id = $_SESSION['UserID'];
             
@@ -165,7 +149,7 @@
         }
 
         //Hämtar information från "Posts" från den inloggade användaren
-        $getPost_stamt = $conn -> prepare("SELECT * FROM Posts WHERE UserID =? ORDER BY created_at DESC");
+        $getPost_stamt = $conn->prepare(" SELECT Posts.*, Tags.* FROM Posts INNER JOIN Tags ON Posts.TagID = Tags.TagID WHERE Posts.UserID = ? ORDER BY Posts.created_at DESC ");
         $getPost_stamt->bind_param('s', $_SESSION['UserID']);
         $getPost_stamt->execute();
         $results = $getPost_stamt->get_result();
@@ -180,15 +164,8 @@
             echo '<div class="post-meta">By ' . $Author . " (you)". ' on ' . $row['Created_at'] . '</div>';
             echo '<div class="post-content">' . $row['Content'] . '</div>';
 
-            //hämtar infromation för taggs
-            $getPost_stamt = $conn -> prepare("SELECT * FROM Tags WHERE TagID =?");
-            $getPost_stamt->bind_param('s', $row['TagID']);
-            $getPost_stamt->execute();
-            $res =$getPost_stamt->get_result();
-            $TagDATA = $res->fetch_assoc();
-
             // Display the tags for the post
-            $tags = explode(',', $TagDATA['Tagname']);
+            $tags = explode(',', $row['Tagname']);
             echo '<div class="post-tags">';
             foreach($tags as $tag) {
                 echo '<span class="tag ' . $tag . '">' . $tag . '</span>';
