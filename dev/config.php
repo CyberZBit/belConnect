@@ -1,6 +1,5 @@
 <?php
     //fix efter redovisning (1)
-    session_start();
     //Denna kod skapar en konstant med namnet "DB_SERVER", "DB_USERNAME", "DB_PASSWORD" "DB_NAME" och om det inte redan är definierat och ger det värdet "localhost" etc
 
     if (!defined('DB_SERVER')) {

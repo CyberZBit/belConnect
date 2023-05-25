@@ -33,16 +33,19 @@
                     $selected_tags = $tags;
                 };
 
-                // Build the WHERE clause for the tags
                 $where_clause = "";
                 foreach ($selected_tags as $tag) {
                     if($tag === "ALL POSTS"){
                         $where_clause = "";
                     }else{
-                        if ($where_clause == "") $where_clause = "WHERE Tagname = '$tag'";
+                        if ($where_clause == "") {
+                            $where_clause = "WHERE TagID = (SELECT TagID FROM Tags WHERE Tagname = '$tag')";
+                        } else {
+                            $where_clause .= " OR TagID = (SELECT TagID FROM Tags WHERE Tagname = '$tag')";
+                        }
                     }
                 }
-                
+
                 echo '
                 <h1 style="text-align:center; margin-top:50px;">Welcome, ' . $usr . "!" .'</h1>
                 <form method="POST" id="filter-form" style="text-align:center">
